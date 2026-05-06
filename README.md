@@ -27,8 +27,12 @@ iac-templates/
 │       ├── rds.yml                   # Basic standalone RDS
 │       └── rules1.yml                # Rules and validations example
 ├── terraform/
-│   └── others/
-│       └── template01.tf             # VPC + public subnet + IGW + route table + SG + EC2
+│   └── 01-test/                      # Infrastructure with modular approach
+│       ├── modules/
+│       │   ├── ec2/                  # EC2 instance and Security Group module
+│       │   └── vpc/                  # VPC, Subnets, IGW, and Routing module
+│       ├── main.tf                   # Main configuration calling modules
+│       └── variables.tf              # Global variables
 └── README.md
 ```
 
