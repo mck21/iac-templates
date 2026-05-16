@@ -22,5 +22,5 @@ output "vpc_id" {
 }
 
 output "ec2_id" {
-  value = module.ec2.instance_id
+  value = module.ec2_ubuntu24.ubuntu24_instance_id
 }
