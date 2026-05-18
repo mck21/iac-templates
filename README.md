@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/AWS-CloudFormation-ff69b4?style=for-the-badge&logo=amazonaws&logoColor=white" alt="CloudFormation"/>
+  <img src="https://img.shields.io/badge/AWS-CloudFormation-FF4F8B?style=for-the-badge&logo=amazonaws&logoColor=white&labelColor=FF4F8B" alt="CloudFormation"/>
   <img src="https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white" alt="Terraform"/>
 </p>
 
