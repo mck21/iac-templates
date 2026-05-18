@@ -27,12 +27,13 @@ iac-templates/
 │       ├── rds.yml                   # Basic standalone RDS
 │       └── rules1.yml                # Rules and validations example
 ├── terraform/
-│   └── 01-test/                      # Infrastructure with modular approach
-│       ├── modules/
-│       │   ├── ec2/                  # EC2 instance and Security Group module
-│       │   └── vpc/                  # VPC, Subnets, IGW, and Routing module
-│       ├── main.tf                   # Main configuration calling modules
-│       └── variables.tf              # Global variables
+│   ├── 01-test/                      # Infrastructure testing
+│   ├── 02-ubuntu24/                  # VPC + Ubuntu 24.04 EC2 instance
+│   ├── 03-windows/                   # VPC + Windows Server 2022 EC2 instance
+│   ├── 04-s3/                        # S3 Bucket with private access block
+│   ├── 05-alb/                       # ALB + Target Group + Multi-AZ EC2
+│   ├── 06-asg/                       # Auto Scaling Group + Launch Template
+│   └── 07-rds/                       # Private RDS MySQL + DB Subnet Group + EC2 Bastion
 └── README.md
 ```
 
@@ -101,13 +102,17 @@ terraform destroy
 
 | Terraform Concept | Templates |
 |---|---|
-| `provider` (AWS region) | 01 |
-| `aws_vpc` | 01 |
-| `aws_subnet` (public, `map_public_ip_on_launch`) | 01 |
-| `aws_internet_gateway` | 01 |
-| `aws_route_table` + `aws_route_table_association` | 01 |
-| `aws_security_group` (SSH + HTTP ingress) | 01 |
-| `aws_instance` (EC2 + key pair + tags) | 01 |
+| `provider` (AWS region) | All |
+| `module` (modular infrastructure) | All |
+| `aws_vpc`, `aws_subnet`, `aws_internet_gateway` | All |
+| `aws_route_table` + `aws_route_table_association` | All |
+| `data "aws_ami"` | 02, 03, 05, 06 |
+| `aws_security_group` | 01, 05, 07 |
+| `aws_instance` (EC2 + tags) | 01, 02, 03, 05, 07 |
+| `aws_s3_bucket` + public access block | 04 |
+| `aws_lb` + `aws_lb_target_group` + `aws_lb_listener` | 05 |
+| `aws_launch_template` + `aws_autoscaling_group` | 06 |
+| `aws_db_instance` (RDS) + `aws_db_subnet_group` | 07 |
 
 ---
 
