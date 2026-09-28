@@ -5,9 +5,9 @@
 
 # IaC Templates
 
-AWS infrastructure templates with **CloudFormation** (learning basics) and **Terraform** (basics + portfolio scenarios).
+AWS infrastructure templates: **CloudFormation** learning basics and **Terraform** basics plus portfolio scenarios.
 
-> Scenarios are validated with `terraform validate` (and `fmt`). They are **not deployed** to AWS in this repository’s default workflow.
+> Portfolio scenarios are validated with `terraform fmt` / `terraform validate` only. They are **not deployed** to AWS in this repository’s default workflow.
 
 ---
 
@@ -17,21 +17,21 @@ AWS infrastructure templates with **CloudFormation** (learning basics) and **Ter
 iac-templates/
 ├── cloudformation/
 │   └── basics/
-│       ├── tasks/                        # Progressive CFN exercises
-│       └── others/                       # Extra CFN examples
+│       ├── tasks/                 # Progressive CFN exercises
+│       └── others/                # Extra CFN examples
 └── terraform/
-    ├── basics/                           # Progressive TF exercises (01–07)
-    ├── modules/                          # vpc, iam, s3, rds, alb, asg
+    ├── basics/                    # Progressive TF exercises (01–07)
+    ├── modules/                   # vpc, iam, s3, rds, alb, asg
     ├── business-growth/
-    │   ├── level-1-startup/              # Implemented
-    │   ├── level-2-growth/               # Implemented
-    │   ├── level-3-ecs/                  # Roadmap (optional)
-    │   └── level-3-eks/                  # Roadmap
+    │   ├── level-1-startup/       # Implemented
+    │   ├── level-2-growth/        # Implemented
+    │   ├── level-3-ecs/           # Roadmap
+    │   └── level-3-eks/           # Roadmap
     └── deployment-strategies/
-        ├── README.md                     # Strategy comparison table
-        ├── blue-green/                   # Implemented
-        ├── canary/                       # Roadmap
-        └── ab-testing/                   # Roadmap
+        ├── README.md              # Blue-green vs canary vs A/B
+        ├── blue-green/            # Implemented
+        ├── canary/                # Roadmap
+        └── ab-testing/            # Roadmap
 ```
 
 ---
@@ -43,19 +43,42 @@ iac-templates/
 | `terraform/basics/*` | Progressive TF exercises (VPC, EC2, S3, ALB, ASG, RDS) | Implemented (learning) |
 | `cloudformation/basics/*` | Progressive CFN exercises | Implemented (learning) |
 | `business-growth/level-1-startup` | VPC, SSM EC2, single-AZ RDS, S3, least-privilege IAM | Implemented |
-| `business-growth/level-2-growth` | ALB + ASG, NAT, Multi-AZ RDS + replica, CloudWatch | Implemented |
+| `business-growth/level-2-growth` | ALB + ASG (CPU tracking), NAT, Multi-AZ RDS + replica, CloudWatch | Implemented |
 | `business-growth/level-3-ecs` | ECS Fargate, Aurora Serverless v2, SQS/EventBridge | Roadmap |
 | `business-growth/level-3-eks` | EKS | Roadmap |
-| `deployment-strategies/blue-green` | Weighted ALB listener, dual ASG (`for_each`) | Implemented |
+| `deployment-strategies/blue-green` | Dual ASG (`for_each`) + ALB weighted forward cutover | Implemented |
 | `deployment-strategies/canary` | Gradual traffic shift | Roadmap |
 | `deployment-strategies/ab-testing` | Rule-based traffic split | Roadmap |
+
+---
+
+## Validate portfolio scenarios (offline)
+
+Requires Terraform `>= 1.11`. No AWS credentials needed for `validate`.
+
+```bash
+# From repo root — repeat per Implemented scenario directory:
+cd terraform/business-growth/level-1-startup
+terraform fmt -check -recursive
+terraform init -backend=false
+terraform validate
+
+cd ../level-2-growth
+terraform init -backend=false
+terraform validate
+
+cd ../../deployment-strategies/blue-green
+terraform init -backend=false
+terraform validate
+```
+
+Defaults: region `eu-west-1`; AMI and AZs are variables (no data sources) so validation works offline. Copy `terraform.tfvars.example` before any real plan/apply.
 
 ---
 
 ## CloudFormation (basics)
 
 ```bash
-# Example (requires AWS credentials — not part of offline validation)
 aws cloudformation create-stack \
   --stack-name my-stack \
   --template-body file://cloudformation/basics/tasks/template01.yml \
@@ -75,27 +98,12 @@ aws cloudformation create-stack \
 
 ---
 
-## Terraform
-
-### Basics
+## Terraform basics
 
 ```bash
 cd terraform/basics/01-test
 terraform init
 terraform plan
-```
-
-### Portfolio scenarios (offline validation)
-
-```bash
-cd terraform/business-growth/level-1-startup
-terraform fmt -check -recursive
-terraform init -backend=false
-terraform validate
-
-cd ../level-2-growth
-terraform init -backend=false
-terraform validate
 ```
 
 | Terraform concept | Basics |
@@ -110,4 +118,4 @@ terraform validate
 
 ---
 
-> Learning templates and portfolio scenarios. Review AMI IDs, regions, and costs before any real deploy. Default portfolio region target: `eu-west-1`.
+> Learning templates and portfolio scenarios. Review AMI IDs, bucket names, regions, and costs before any real deploy.
