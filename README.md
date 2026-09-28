@@ -3,117 +3,119 @@
   <img src="https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white" alt="Terraform"/>
 </p>
 
-# 🏗️ IaC Templates
+# IaC Templates
 
-A monorepo of AWS infrastructure templates using **CloudFormation** and **Terraform**, organised as progressive practical exercises. They cover from basic networking to high availability architectures with load balancing, databases and storage.
+AWS infrastructure templates: **CloudFormation** learning basics and **Terraform** basics plus portfolio scenarios.
+
+> Portfolio scenarios are validated with `terraform fmt` / `terraform validate` only. They are **not deployed** to AWS in this repository’s default workflow.
 
 ---
 
-## 📁 Repository structure
+## Repository structure
 
 ```
 iac-templates/
 ├── cloudformation/
-│   ├── tasks/                        # Exercise templates (progressive)
-│   │   ├── template01.yml            # VPC + public subnet + conditional EC2
-│   │   ├── template02.yml            # Multi-region VPC with Mappings + conditional IGW
-│   │   ├── template03.yml            # ALB + Multi-AZ Auto Scaling Group
-│   │   ├── template04.yml            # HA VPC with NAT Gateway + VPC Peering
-│   │   ├── template05.yml            # Multi-AZ RDS MySQL in private subnets
-│   │   └── template06.yml            # S3 Bucket with access policies and lifecycle
-│   └── others/                       # Test templates
-│       ├── hola.yml                  # Basic VPC + subnet + EC2 (first template)
-│       ├── mappings.yml              # Mappings usage example
-│       ├── rds.yml                   # Basic standalone RDS
-│       └── rules1.yml                # Rules and validations example
-├── terraform/
-│   ├── 01-test/                      # Infrastructure testing
-│   ├── 02-ubuntu24/                  # VPC + Ubuntu 24.04 EC2 instance
-│   ├── 03-windows/                   # VPC + Windows Server 2022 EC2 instance
-│   ├── 04-s3/                        # S3 Bucket with private access block
-│   ├── 05-alb/                       # ALB + Target Group + Multi-AZ EC2
-│   ├── 06-asg/                       # Auto Scaling Group + Launch Template
-│   └── 07-rds/                       # Private RDS MySQL + DB Subnet Group + EC2 Bastion
-└── README.md
+│   └── basics/
+│       ├── tasks/                 # Progressive CFN exercises
+│       └── others/                # Extra CFN examples
+└── terraform/
+    ├── basics/                    # Progressive TF exercises (01–07)
+    ├── modules/                   # vpc, iam, s3, rds, alb, asg
+    ├── business-growth/
+    │   ├── level-1-startup/       # Implemented
+    │   ├── level-2-growth/        # Implemented
+    │   ├── level-3-ecs/           # Roadmap
+    │   └── level-3-eks/           # Roadmap
+    └── deployment-strategies/
+        ├── README.md              # Blue-green vs canary vs A/B
+        ├── blue-green/            # Implemented
+        ├── canary/                # Roadmap
+        └── ab-testing/            # Roadmap
 ```
 
 ---
 
-## ☁️ CloudFormation
+## Scenario status
 
-### 🚀 Deploy
+| Scenario | What it demonstrates | Status |
+|----------|----------------------|--------|
+| `terraform/basics/*` | Progressive TF exercises (VPC, EC2, S3, ALB, ASG, RDS) | Implemented (learning) |
+| `cloudformation/basics/*` | Progressive CFN exercises | Implemented (learning) |
+| `business-growth/level-1-startup` | VPC, SSM EC2, single-AZ RDS, S3, least-privilege IAM | Implemented |
+| `business-growth/level-2-growth` | ALB + ASG (CPU tracking), NAT, Multi-AZ RDS + replica, CloudWatch | Implemented |
+| `business-growth/level-3-ecs` | ECS Fargate, Aurora Serverless v2, SQS/EventBridge | Roadmap |
+| `business-growth/level-3-eks` | EKS | Roadmap |
+| `deployment-strategies/blue-green` | Dual ASG (`for_each`) + ALB weighted forward cutover | Implemented |
+| `deployment-strategies/canary` | Gradual traffic shift | Roadmap |
+| `deployment-strategies/ab-testing` | Rule-based traffic split | Roadmap |
+
+---
+
+## Validate portfolio scenarios (offline)
+
+Requires Terraform `>= 1.11`. No AWS credentials needed for `validate`.
 
 ```bash
-# Validate before creating
-aws cloudformation validate-template --template-body file://cloudformation/tasks/template01.yml
+# From repo root — repeat per Implemented scenario directory:
+cd terraform/business-growth/level-1-startup
+terraform fmt -check -recursive
+terraform init -backend=false
+terraform validate
 
-# Create stack
+cd ../level-2-growth
+terraform init -backend=false
+terraform validate
+
+cd ../../deployment-strategies/blue-green
+terraform init -backend=false
+terraform validate
+```
+
+Defaults: region `eu-west-1`; AMI and AZs are variables (no data sources) so validation works offline. Copy `terraform.tfvars.example` before any real plan/apply.
+
+---
+
+## CloudFormation (basics)
+
+```bash
 aws cloudformation create-stack \
   --stack-name my-stack \
-  --template-body file://cloudformation/tasks/template01.yml \
-  --parameters ParameterKey=CreateInstance,ParameterValue=true
-
-# View outputs
-aws cloudformation describe-stacks \
-  --stack-name my-stack \
-  --query 'Stacks[0].Outputs'
-
-# Delete stack
-aws cloudformation delete-stack --stack-name my-stack
+  --template-body file://cloudformation/basics/tasks/template01.yml \
+  --parameters ParameterKey=CrearInstancia,ParameterValue=true
 ```
 
-### 🛠️ Concepts covered
-
-| CFN Concept | Templates |
+| CFN concept | Templates |
 |---|---|
-| `Parameters` + `AllowedValues` | All |
-| `Conditions` + `!Equals` / `!If` | 01, 02, 03, 05, 06 |
-| `Rules` + `Assertions` | 01 |
-| `Mappings` + `!FindInMap` | 02, 04, 05, 06 |
-| `!GetAZs` + `!Select` | 01, 02, 03, 04 |
-| VPC Peering | 04 |
-| NAT Gateway | 04 |
-| ALB + ASG + Launch Template | 03 |
-| RDS Multi-AZ + Parameter Group | 05 |
-| S3 lifecycle + bucket policies | 06 |
-| Outputs with `Export` | 04, 05, 06 |
+| Parameters + AllowedValues | All |
+| Conditions | 01, 02, 03, 05, 06 |
+| Rules | 01 |
+| Mappings | 02, 04, 05, 06 |
+| ALB + ASG | 03 |
+| NAT + Peering | 04 |
+| RDS Multi-AZ | 05 |
+| S3 lifecycle | 06 |
 
 ---
 
-## 🏗️ Terraform
-
-### 🚀 Deploy
+## Terraform basics
 
 ```bash
-# Initialise Terraform (download providers)
+cd terraform/basics/01-test
 terraform init
-
-# Preview changes before applying
 terraform plan
-
-# Apply infrastructure
-terraform apply
-
-# Destroy infrastructure
-terraform destroy
 ```
 
-### 🛠️ Concepts covered
-
-| Terraform Concept | Templates |
+| Terraform concept | Basics |
 |---|---|
-| `provider` (AWS region) | All |
-| `module` (modular infrastructure) | All |
-| `aws_vpc`, `aws_subnet`, `aws_internet_gateway` | All |
-| `aws_route_table` + `aws_route_table_association` | All |
-| `data "aws_ami"` | 02, 03, 05, 06 |
-| `aws_security_group` | 01, 05, 07 |
-| `aws_instance` (EC2 + tags) | 01, 02, 03, 05, 07 |
-| `aws_s3_bucket` + public access block | 04 |
-| `aws_lb` + `aws_lb_target_group` + `aws_lb_listener` | 05 |
-| `aws_launch_template` + `aws_autoscaling_group` | 06 |
-| `aws_db_instance` (RDS) + `aws_db_subnet_group` | 07 |
+| provider / modules | All |
+| VPC, subnets, IGW | All |
+| EC2 | 01–03, 05, 07 |
+| S3 | 04 |
+| ALB | 05 |
+| ASG | 06 |
+| RDS | 07 |
 
 ---
 
-> Templates designed for learning environments. AMIs, key names and some configurations are region-specific — review values before deploying to production.
+> Learning templates and portfolio scenarios. Review AMI IDs, bucket names, regions, and costs before any real deploy.

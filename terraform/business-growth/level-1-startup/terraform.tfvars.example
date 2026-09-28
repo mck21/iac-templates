@@ -1,0 +1,4 @@
+aws_region   = "eu-west-1"
+environment  = "dev"
+bucket_name  = "iac-portfolio-l1-dev-CHANGE-ME"
+# ami_id     = "ami-xxxxxxxx" # AL2023 in your region

@@ -1,0 +1,5 @@
+aws_region                = "eu-west-1"
+environment               = "dev"
+bucket_name               = "iac-portfolio-l2-dev-CHANGE-ME"
+create_read_replica       = true
+backup_retention_period   = 7
