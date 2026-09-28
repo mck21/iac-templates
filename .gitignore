@@ -9,8 +9,8 @@
 *.tfstate
 *.tfstate.backup
 
-# Terraform lock file (uncomment if you want to version lock files)
-.terraform.lock.hcl
+# Lock files are committed for portfolio scenarios (reproducible providers).
+# Basics may still generate local lock files; ignore none globally.
 
 # Terraform variable files that may contain sensitive values
 *.tfvars

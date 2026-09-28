@@ -21,11 +21,11 @@ iac-templates/
 │       └── others/                       # Extra CFN examples
 └── terraform/
     ├── basics/                           # Progressive TF exercises (01–07)
-    ├── modules/                          # Shared modules (coming in Phase 1)
+    ├── modules/                          # vpc, iam, s3, rds, alb, asg
     ├── business-growth/
-    │   ├── level-1-startup/              # Roadmap until Phase 1
-    │   ├── level-2-growth/               # Roadmap until Phase 1
-    │   ├── level-3-ecs/                  # Roadmap (optional Phase 4)
+    │   ├── level-1-startup/              # Implemented
+    │   ├── level-2-growth/               # Implemented
+    │   ├── level-3-ecs/                  # Roadmap (optional)
     │   └── level-3-eks/                  # Roadmap
     └── deployment-strategies/
         ├── README.md                     # Strategy comparison table
@@ -42,8 +42,8 @@ iac-templates/
 |----------|----------------------|--------|
 | `terraform/basics/*` | Progressive TF exercises (VPC, EC2, S3, ALB, ASG, RDS) | Implemented (learning) |
 | `cloudformation/basics/*` | Progressive CFN exercises | Implemented (learning) |
-| `business-growth/level-1-startup` | VPC, SSM EC2, single-AZ RDS, S3, least-privilege IAM | Roadmap |
-| `business-growth/level-2-growth` | ALB + ASG, NAT, Multi-AZ RDS + replica, CloudWatch | Roadmap |
+| `business-growth/level-1-startup` | VPC, SSM EC2, single-AZ RDS, S3, least-privilege IAM | Implemented |
+| `business-growth/level-2-growth` | ALB + ASG, NAT, Multi-AZ RDS + replica, CloudWatch | Implemented |
 | `business-growth/level-3-ecs` | ECS Fargate, Aurora Serverless v2, SQS/EventBridge | Roadmap |
 | `business-growth/level-3-eks` | EKS | Roadmap |
 | `deployment-strategies/blue-green` | Weighted ALB listener, dual ASG | Roadmap |
@@ -88,9 +88,12 @@ terraform plan
 ### Portfolio scenarios (offline validation)
 
 ```bash
-# After a scenario is Implemented:
 cd terraform/business-growth/level-1-startup
 terraform fmt -check -recursive
+terraform init -backend=false
+terraform validate
+
+cd ../level-2-growth
 terraform init -backend=false
 terraform validate
 ```
