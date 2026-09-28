@@ -1,0 +1,4 @@
+aws_region   = "eu-west-1"
+environment  = "dev"
+active_color = "blue"
+# Flip to "green" for cutover / set back to "blue" for instant rollback.

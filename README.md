@@ -29,7 +29,7 @@ iac-templates/
     │   └── level-3-eks/                  # Roadmap
     └── deployment-strategies/
         ├── README.md                     # Strategy comparison table
-        ├── blue-green/                   # Roadmap until Phase 2
+        ├── blue-green/                   # Implemented
         ├── canary/                       # Roadmap
         └── ab-testing/                   # Roadmap
 ```
@@ -46,7 +46,7 @@ iac-templates/
 | `business-growth/level-2-growth` | ALB + ASG, NAT, Multi-AZ RDS + replica, CloudWatch | Implemented |
 | `business-growth/level-3-ecs` | ECS Fargate, Aurora Serverless v2, SQS/EventBridge | Roadmap |
 | `business-growth/level-3-eks` | EKS | Roadmap |
-| `deployment-strategies/blue-green` | Weighted ALB listener, dual ASG | Roadmap |
+| `deployment-strategies/blue-green` | Weighted ALB listener, dual ASG (`for_each`) | Implemented |
 | `deployment-strategies/canary` | Gradual traffic shift | Roadmap |
 | `deployment-strategies/ab-testing` | Rule-based traffic split | Roadmap |
 
